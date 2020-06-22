@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- prettier-ignore -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="shortcut icon" href="https://cdn.glitch.com/e1c8387f-9c1d-4683-84b5-32c40c510abd%2Ffavicon.ico?v=1579979902340" type="image/x-icon" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/default.min.css" />
+
+    <title>Python file metadata microservice – Ty Mick</title>
+  </head>
+
+  <body style="background-color: #dee2e6;">
+    <div class="container-md my-5">
+      <h1 class="mb-4">Python file metadata microservice</h1>
+
+      <!-- API test front end -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="mb-3">Test this API:</h5>
+
+          <form
+            id="uploadForm"
+            enctype="multipart/form-data"
+            method="POST"
+            action="/api/fileanalyse"
+            class="mb-4"
+          >
+            <div class="custom-file mb-3">
+              <input
+                type="file"
+                class="custom-file-input"
+                id="fileUpload"
+                name="upfile"
+              />
+              <label
+                class="custom-file-label"
+                for="fileUpload"
+                style="cursor: pointer;"
+                >Choose file&hellip;</label
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">POST</button>
+          </form>
+
+          <h5>API response:</h5>
+
+          <div class="card">
+            <pre id="apiOutput" class="hljs bg-white mb-0">&#8203;</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Explanation -->
+      <p class="lead font-italic">
+        View the source on
+        <a href="https://github.com/tywmick/file-metadata-python">GitHub</a>
+        or <a href="https://glitch.com/edit/#!/ty-file-metadata-python">Glitch</a>.
+      </p>
+
+      <p>
+        This is a Python/<a href="https://flask.palletsprojects.com/en/1.1.x/"
+          >Flask</a
+        >
+        port of my
+        <a href="https://ty-file-metadata.glitch.me"
+          >Node.js file metadata microservice project</a
+        >, which was originally built to fulfill the following user stories:
+      </p>
+
+      <ol>
+        <li>I can submit a form object that includes a file upload.</li>
+        <li>
+          The from file input field has the <code>name</code> attribute set to
+          <code>"upfile"</code>. We rely on this in testing.
+        </li>
+        <li>
+          When I submit something, I will receive the file name and size in
+          bytes within the JSON response.
+        </li>
+      </ol>
+    </div>
+
+    <!-- Glitch button -->
+    <div
+      class="glitchButton"
+      style="position:absolute;top:20px;right:20px;"
+    ></div>
+    <script src="https://button.glitch.me/button.js"></script>
+
+    <!-- prettier-ignore -->
+    <span>
+      <!-- jQuery -->
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <!-- Popper -->
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <!-- Bootstrap -->
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>      
+      <!-- bs-custom-file-input -->
+      <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+      <!-- highlight.js -->
+      <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+    </span>
+
+    <!-- Initialize bs-custom-file-input -->
+    <script>
+      $(document).ready(function() {
+        bsCustomFileInput.init();
+      });
+    </script>
+
+    <!-- API test script -->
+    <script>
+      $(function() {
+        $("#uploadForm").submit(function() {
+          event.preventDefault();
+          $("button").attr("disabled", true);
+          $("button", this).html(
+            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Uploading...</span>'
+          );
+          $.ajax({
+            url: "/api/fileanalyse",
+            type: "post",
+            data: new FormData($(this)[0]),
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(result) {
+              $("#apiOutput").text(JSON.stringify(result, null, 2));
+              hljs.highlightBlock(document.getElementById("apiOutput"));
+              $("#uploadForm button").html("POST");
+              $("button").removeAttr("disabled");
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
